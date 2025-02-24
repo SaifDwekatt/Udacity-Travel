@@ -1,9 +1,11 @@
 import { calculateDaysUntil, calculateTripDuration, getGeoData, getWeatherData, getImageUrl } from "./app.js"
 import { jest, describe, test, expect, beforeEach } from "@jest/globals"
 
+global.fetch = jest.fn()
+
 describe("Client-side functions", () => {
   beforeEach(() => {
-    jest.resetAllMocks()
+    global.fetch.mockClear()
   })
 
   test("calculateDaysUntil returns correct number of days", () => {
@@ -23,36 +25,51 @@ describe("Client-side functions", () => {
     const mockResponse = {
       geonames: [{ name: "Paris", countryName: "France", lat: "48.85341", lng: "2.3488" }],
     }
-    fetch.mockResolvedValueOnce({
-      json: jest.fn().mockResolvedValueOnce(mockResponse),
-    })
+
+    global.fetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(mockResponse),
+      }),
+    )
 
     const result = await getGeoData("Paris")
     expect(result).toEqual(mockResponse.geonames[0])
+    expect(global.fetch).toHaveBeenCalledTimes(1)
   })
 
   test("getWeatherData fetches and returns weather data", async () => {
     const mockResponse = {
       data: [{ temp: 25, weather: { description: "Sunny" } }],
     }
-    fetch.mockResolvedValueOnce({
-      json: jest.fn().mockResolvedValueOnce(mockResponse),
-    })
+
+    global.fetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(mockResponse),
+      }),
+    )
 
     const result = await getWeatherData(48.85341, 2.3488, "2023-07-01")
     expect(result).toEqual(mockResponse.data[0])
+    expect(global.fetch).toHaveBeenCalledTimes(1)
   })
 
   test("getImageUrl fetches and returns image URL", async () => {
     const mockResponse = {
       hits: [{ webformatURL: "https://example.com/image.jpg" }],
     }
-    fetch.mockResolvedValueOnce({
-      json: jest.fn().mockResolvedValueOnce(mockResponse),
-    })
+
+    global.fetch.mockImplementationOnce(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve(mockResponse),
+      }),
+    )
 
     const result = await getImageUrl("Paris")
     expect(result).toBe("https://example.com/image.jpg")
+    expect(global.fetch).toHaveBeenCalledTimes(1)
   })
 })
 
