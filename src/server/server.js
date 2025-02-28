@@ -1,94 +1,71 @@
 import express from "express"
-import path from "path"
-import { fileURLToPath } from "url"
-import fetch from "node-fetch"
+import bodyParser from "body-parser"
+import cors from "cors"
 import dotenv from "dotenv"
 
+// Configure environment variables
 dotenv.config()
 
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
+// Setup empty JS object to act as endpoint for all routes
+let projectData = {}
 
+// Initialize express app
 const app = express()
+
+/* Middleware*/
+// Configure express to use body-parser as middleware
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
+
+// Enable CORS for all routes
+app.use(cors())
+
+// Initialize the main project folder
+app.use(express.static("dist"))
+
+// Setup Server
 const port = process.env.PORT || 3000
 
-// Middleware
-app.use(express.static("dist"))
-app.use(express.json())
+/**
+ * GET route to retrieve all project data
+ * This route sends the projectData object as a response
+ */
+app.get("/all", (req, res) => {
+  res.send(projectData)
+})
 
-// API keys
+/**
+ * POST route to add new data to projectData
+ * This route receives trip data from the client and stores it in the projectData object
+ */
+app.post("/add", (req, res) => {
+  try {
+    // Update projectData with the received data
+    projectData = {
+      temperature: req.body.temperature,
+      date: req.body.date,
+      userResponse: req.body.userResponse,
+      city: req.body.city,
+      country: req.body.country,
+      weatherDescription: req.body.weatherDescription,
+      imageUrl: req.body.imageUrl,
+    }
+    res.send(projectData)
+  } catch (error) {
+    console.error("Error adding data:", error)
+    res.status(500).send("An error occurred while adding data")
+  }
+})
+
+// API keys (accessed from environment variables for security)
 const WEATHERBIT_API_KEY = process.env.WEATHERBIT_API_KEY
 const PIXABAY_API_KEY = process.env.PIXABAY_API_KEY
 
-// Mock fetch for testing
-const mockFetch = (url) => {
-  if (url.includes("weatherbit")) {
-    return Promise.resolve({
-      json: () => Promise.resolve({ data: [{ temp: 25, weather: { description: "Sunny" } }] }),
-    })
-  } else if (url.includes("pixabay")) {
-    return Promise.resolve({
-      json: () => Promise.resolve({ hits: [{ webformatURL: "https://example.com/image.jpg" }] }),
-    })
-  }
-  return Promise.reject(new Error("Not found"))
-}
-
-// Use mock fetch in test environment
-const fetchToUse = process.env.NODE_ENV === "test" ? mockFetch : fetch
-
-// Routes
-app.get("/", (req, res) => {
-  res.sendFile(path.resolve("dist/index.html"))
-})
-
-app.get("/test", (req, res) => {
-  res.json({ message: "Test route working" })
-})
-
-// Weather API route
-app.get("/weather", async (req, res) => {
-  const { lat, lon } = req.query
-  try {
-    const response = await fetchToUse(
-      `https://api.weatherbit.io/v2.0/forecast/daily?lat=${lat}&lon=${lon}&key=${WEATHERBIT_API_KEY}`,
-    )
-    const data = await response.json()
-    if (data.error) {
-      throw new Error(data.error)
-    }
-    res.json(data)
-  } catch (error) {
-    console.error("Error fetching weather data:", error)
-    res.status(500).json({ error: error.message || "Failed to fetch weather data" })
-  }
-})
-
-// Image API route
-app.get("/image", async (req, res) => {
-  const { city } = req.query
-  try {
-    const response = await fetchToUse(
-      `https://pixabay.com/api/?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(city)}+city&image_type=photo`,
-    )
-    const data = await response.json()
-    if (data.error) {
-      throw new Error(data.error)
-    }
-    res.json(data)
-  } catch (error) {
-    console.error("Error fetching image data:", error)
-    res.status(500).json({ error: error.message || "Failed to fetch image data" })
-  }
-})
-
 // Start server
-let server
 if (process.env.NODE_ENV !== "test") {
-  server = app.listen(port, () => {
-    console.log(`Server running on port ${port}`)
-  })
+  app.listen(port, () => console.log(`Server running on localhost: ${port}`))
 }
 
-export { app, server }
+// Export for testing
+export default app
 

@@ -4,30 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Travel Planner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>Travel Planner</h1>
+        <header class="header">
+            <h1 class="header__title">Travel Planner</h1>
         </header>
 
-        <main>
-            <section>
-                <form id="travel-form">
-                    <input type="text" id="city" placeholder="Enter destination city" required>
-                    <input type="date" id="departure" required>
-                    <input type="date" id="return" required>
-                    <button type="submit" id="submit">Plan My Trip</button>
+        <main class="main-content">
+            <section class="trip-form">
+                <h2 class="trip-form__title">Plan Your Trip</h2>
+                <form id="travel-form" class="travel-form">
+                    <div class="form-group">
+                        <label for="city" class="form-label">Destination:</label>
+                        <input type="text" id="city" name="city" class="form-input" placeholder="Enter destination city" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="departure" class="form-label">Departure Date:</label>
+                        <input type="date" id="departure" name="departure" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="return" class="form-label">Return Date:</label>
+                        <input type="date" id="return" name="return" class="form-input" required>
+                    </div>
+                    <button type="submit" id="submit" class="submit-btn">Plan My Trip</button>
                 </form>
             </section>
 
-            <section id="results">
+            <section id="results" class="trip-results">
                 <!-- Results will be dynamically inserted here -->
             </section>
         </main>
 
-        <footer>
-            <p>&copy; 2023 Travel Planner. All rights reserved.</p>
+        <footer class="footer">
+            <p class="footer__text">&copy; 2023 Travel Planner. All rights reserved.</p>
         </footer>
     </div>
 </body>

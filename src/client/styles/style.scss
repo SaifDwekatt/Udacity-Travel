@@ -1,77 +1,237 @@
-$primary-color: #4a4a4a;
-$secondary-color: #0077be;
-$background-color: #f4f4f4;
+// Variables
+$primary-color: #3498db;
+$secondary-color: #2ecc71;
+$background-color: #ecf0f1;
+$text-color: #34495e;
+$accent-color: #e74c3c;
+
+// Mixins
+@mixin box-shadow {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+@mixin transition {
+  transition: all 0.3s ease;
+}
+
+@mixin hover-effect {
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+
+// Reset
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+// Base styles
+html {
+  font-size: 16px;
+}
 
 body {
-    font-family: Arial, sans-serif;
-    line-height: 1.6;
-    color: $primary-color;
-    background-color: $background-color;
-    padding: 20px;
+  font-family: 'Roboto', sans-serif;
+  background-color: $background-color;
+  color: $text-color;
+  line-height: 1.6;
 }
 
 .container {
-    max-width: 800px;
-    margin: 0 auto;
-    background-color: white;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
 }
 
-h1 {
-    color: $secondary-color;
-    text-align: center;
+// Typography
+h1, h2, h3, h4, h5, h6 {
+  margin-bottom: 0.5em;
 }
 
-form {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 20px;
+// Header styles
+.header {
+  background-color: $primary-color;
+  color: white;
+  padding: 1rem 0;
+  text-align: center;
 
-    input, button {
-        margin: 10px 0;
-        padding: 10px;
-        border-radius: 5px;
-        border: 1px solid #ddd;
-    }
-
-    button {
-        background-color: $secondary-color;
-        color: white;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-
-        &:hover {
-            background-color: darken($secondary-color, 10%);
-        }
-    }
+  &__title {
+    font-size: 2rem;
+  }
 }
 
-#results {
-    background-color: #e9e9e9;
-    padding: 20px;
-    border-radius: 5px;
-
-    h2 {
-        color: $secondary-color;
-    }
-
-    img {
-        max-width: 100%;
-        border-radius: 5px;
-        margin-top: 10px;
-    }
+// Main content styles
+.main-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-top: 2rem;
 }
 
-@media (max-width: 600px) {
-    .container {
-        padding: 10px;
-    }
+// Form styles
+.trip-form {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  @include box-shadow;
 
-    form {
-        input, button {
-            font-size: 16px;
-        }
-    }
+  &__title {
+    color: $primary-color;
+    font-size: 1.5rem;
+  }
 }
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  @include transition;
+
+  &:focus {
+    border-color: $primary-color;
+    outline: none;
+  }
+
+  &:hover {
+    border-color: darken(#ddd, 10%);
+  }
+}
+
+.submit-btn {
+  background-color: $secondary-color;
+  color: white;
+  border: none;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 100%;
+  @include transition;
+  @include hover-effect;
+
+  &:hover {
+    background-color: darken($secondary-color, 10%);
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+}
+
+// Results styles
+.trip-results {
+  background-color: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  @include box-shadow;
+
+  h2 {
+    color: $primary-color;
+    font-size: 1.5rem;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-top: 1rem;
+  }
+}
+
+// Footer styles
+.footer {
+  text-align: center;
+  margin-top: 2rem;
+  padding: 1rem 0;
+  border-top: 1px solid #ddd;
+
+  &__text {
+    color: lighten($text-color, 20%);
+    font-size: 0.875rem;
+  }
+}
+
+// Responsive design
+@media (min-width: 768px) {
+  html {
+    font-size: 18px;
+  }
+
+  .main-content {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .trip-form,
+  .trip-results {
+    flex-basis: calc(50% - 1rem);
+  }
+
+  .submit-btn {
+    width: auto;
+    padding: 0.75rem 2rem;
+  }
+}
+
+// Animations
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.trip-results {
+  animation: fadeIn 0.5s ease-in;
+}
+
+// Accessibility
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// Interactive element hover states
+a, button, input[type="submit"], input[type="button"], input[type="reset"] {
+  @include transition;
+  
+  &:hover {
+    opacity: 0.8;
+  }
+
+  &:focus {
+    outline: 2px solid $primary-color;
+    outline-offset: 2px;
+  }
+}
+
